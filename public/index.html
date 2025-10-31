@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>СК "Колізей" — Абонементи</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-wrap bg-circles">
+    <header class="hero">
+      <img src="logo.png" alt="Колізей логотип" class="logo"/>
+      <h1>СПОРТИВНИЙ КЛУБ «КОЛІЗЕЙ»</h1>
+      <p class="subtitle">Керування абонементами</p>
+      <div class="header-actions">
+        <button id="importExportBtn" class="btn small ghost" aria-label="Імп/Експ">Імп/Експ</button>
+        <button id="themeToggle" class="btn small" aria-label="Перемкнути тему">🌙</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="left-side">
+        <section class="form-card" style="margin-right: 0px;">
+        <h2>Керування</h2>
+
+        <label>ПІБ</label>
+        <input id="fio" placeholder="Ім'я Прізвище" />
+
+        <label>Час (ранок/вечір) та тип</label>
+        <select id="abon-type">
+          <option value="12U">12 тренувань — УТРО</option>
+          <option value="9U">9 тренувань — УТРО</option>
+          <option value="12V">12 тренувань — ВЕЧІР</option>
+          <option value="9V">9 тренувань — ВЕЧІР</option>
+          <option value="bezlim">Безлим </option>
+        </select>
+
+        <div id="training-checkboxes" class="training-checkboxes" style="display:none;"></div>
+
+        <div class="row">
+          <button id="activateBtn" class="btn">Активувати абонемент</button>
+        </div>
+
+        <div id="msg" class="msg"></div>
+      </section>
+
+      <section class="notes-card form-card" style="margin-right:0px; margin-top:7px;">
+        <h2>Примітки</h2>
+        <textarea id="notes" placeholder="Додайте примітки..." rows="4" style="margin-top:8px; width:100%; overflow:hidden; resize:none;"  ></textarea>
+      </section>
+      </div>
+
+      <section class="table-card">
+        <div class="table-top">
+          <h2>Список абонементів</h2>
+          <div class="controls">
+            <input id="search" placeholder="Пошук по ПІБ..." />
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table id="abonTable">
+            <thead>
+              <tr>
+                <th data-sort="memberNumber">№ <span class="sort-ind"></span></th>
+                <th data-sort="fio">ПІБ <span class="sort-ind"></span></th>
+                <th data-sort="type">Тип <span class="sort-ind"></span></th>
+                <th data-sort="startDate">Дата початку <span class="sort-ind"></span></th>
+                <th data-sort="attended">Відмітки <span class="sort-ind"></span></th>
+                <th data-sort="endDate">Дата кінця <span class="sort-ind"></span></th>
+                <th data-sort="debt">В борг <span class="sort-ind"></span></th>
+                <th>Дії</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        
+        <div class="mobile-cards" id="mobileCards">
+          <!-- Mobile cards will be generated here -->
+        </div>
+        
+        <p id="noData" class="no-data">Поки немає абонементів.</p>
+      </section>
+
+      
+    </main>
+  </div>
+
+  <!-- Confirm delete modal -->
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-content">
+      <p>Ви дійсно хочете видалити абонемент?</p>
+      <div class="modal-actions">
+        <button id="confirmYes" class="btn danger">Так, видалити</button>
+        <button id="confirmNo" class="btn ghost">Скасувати</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit modal -->
+  <div id="editModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content imex">
+      <button class="modal-close" id="editClose" aria-label="Закрити">✕</button>
+      <h3>Редагувати абонемент</h3>
+      <div class="grid grid-2">
+        <label>ПІБ<input id="editFio" type="text" style="margin-bottom: 8px;"></label>
+        <label>Тип
+          <select id="editType" style="margin-bottom: 8px;">
+            <option value="12U">12У</option>
+            <option value="9U">9У</option>
+            <option value="12V">12В</option>
+            <option value="9V">9В</option>
+            <option value="bezlim">безлим</option>
+
+          </select>
+        </label>
+        <label>Дата початку<input id="editStart" type="date" style="margin-bottom: 8px;"></label>
+        <label>Дата кінця<input id="editEnd" type="date" style="margin-bottom: 8px;"></label>
+        <label>Борг <input id="editDebt" type="checkbox" class="debt-checkbox" style="top: 8px;"></label>
+        </label>
+      </div>
+      <div class="modal-actions" bis_skin_checked="1" style="margin-top: 8px; margin-bottom: 8px;">
+        <button id="editSave" class="btn">Зберегти</button>
+        <button id="editCancel" class="btn ghost">Скасувати</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login modal (не змінював) -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <h3>Вхід до бази</h3>
+      <p>Введіть пароль адміністратора</p>
+      <input id="adminPass" type="password" placeholder="Пароль" />
+      <div id="loginError" class="login-error" aria-live="polite"></div>
+
+      <div class="modal-actions login-actions">
+        <button id="loginBtn" class="btn">Ввійти</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import/Export modal -->
+  <div id="imexModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content imex">
+      <button class="modal-close" id="imexClose" aria-label="Закрити">✕</button>
+      <h3>Імпорт / Експорт</h3>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="export">Експорт</button>
+        <button class="tab-btn" data-tab="import">Імпорт</button>
+      </div>
+      <div class="tab-panels">
+        <div class="tab-panel" data-panel="export">
+          <p>Скачайте всі дані у форматі JSON.</p>
+          <button id="exportJsonBtn" class="btn">Експортувати JSON</button>
+        </div>
+        <div class="tab-panel hidden" data-panel="import">
+          <p>Завантажте JSON файл з абонементами. Нові записи буде додано.</p>
+          <input id="importFile" type="file" accept="application/json" />
+          <div class="row">
+            <button id="importJsonBtn" class="btn">Імпортувати</button>
+            <button id="closeImex" class="btn ghost">Закрити</button>
+          </div>
+          <div id="importPreview" class="msg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
