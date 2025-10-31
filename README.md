@@ -11,7 +11,9 @@ light
 <img width="1902" height="945" alt="image" src="https://github.com/user-attachments/assets/a746ab49-9bf4-418a-9090-1f19a5fdda63" />
 
 start sile:
+
 nmp i
+
 npm start 
 
 
